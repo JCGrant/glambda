@@ -3,7 +3,6 @@ package glambda
 import (
 	"fmt"
 	"regexp"
-	"strings"
 )
 
 type tokenType string
@@ -16,6 +15,7 @@ const (
 	tokenRightParen           = `)`
 	tokenEquals               = `=`
 	tokenIdentifier           = `identifier`
+	tokenWhitespace           = `whitespace`
 )
 
 type token struct {
@@ -28,8 +28,9 @@ func (t token) String() string {
 }
 
 type lexer struct {
-	input  string
-	tokens chan token
+	input    string
+	position int
+	tokens   chan token
 }
 
 func lex(input string) *lexer {
@@ -60,13 +61,18 @@ var tokenRegexes = []struct {
 	{tokenRightParen, regexp.MustCompile(`\A(\))`)},
 	{tokenEquals, regexp.MustCompile(`\A(=)`)},
 	{tokenIdentifier, regexp.MustCompile(`\A(\b[a-zA-Z0-9]+\b)`)},
+	{tokenWhitespace, regexp.MustCompile(`\s`)},
 }
 
 func (l *lexer) lexOneToken() {
 	for _, tr := range tokenRegexes {
-		if value := tr.regex.FindString(l.input); value != "" {
-			l.emit(token{tr.tokenType, value})
-			l.input = l.input[len(value):]
+		input := l.input[l.position:]
+		if value := tr.regex.FindString(input); value != "" {
+			// Ignore whitespace tokens but still want to track position
+			if tr.tokenType != tokenWhitespace {
+				l.emit(token{tr.tokenType, value})
+			}
+			l.position += len(value)
 			return
 		}
 	}
@@ -75,7 +81,6 @@ func (l *lexer) lexOneToken() {
 
 func (l *lexer) run() {
 	for len(l.input) > 0 {
-		l.input = strings.Trim(l.input, " \n\t")
 		l.lexOneToken()
 	}
 	close(l.tokens)
