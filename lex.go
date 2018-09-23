@@ -46,6 +46,10 @@ func (l *lexer) emit(token token) {
 	l.tokens <- token
 }
 
+func (l *lexer) nextItem() token {
+	return <-l.tokens
+}
+
 func (l *lexer) errorf(format string, args ...interface{}) {
 	value := fmt.Sprintf(format, args...)
 	l.emit(token{tokenErr, value})
