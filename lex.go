@@ -6,16 +6,16 @@ import (
 	"strings"
 )
 
-type tokenType int
+type tokenType string
 
 const (
-	tokenErr tokenType = iota
-	tokenLambda
-	tokenDot
-	tokenLeftParen
-	tokenRightParen
-	tokenEquals
-	tokenIdentifier
+	tokenErr        tokenType = `error`
+	tokenLambda               = `\`
+	tokenDot                  = `.`
+	tokenLeftParen            = `(`
+	tokenRightParen           = `)`
+	tokenEquals               = `=`
+	tokenIdentifier           = `identifier`
 )
 
 type token struct {
