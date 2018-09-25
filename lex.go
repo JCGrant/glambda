@@ -24,7 +24,13 @@ type token struct {
 }
 
 func (t token) String() string {
-	return t.value
+	switch {
+	case t.tokenType == tokenErr:
+		return t.value
+	case len(t.value) > 10:
+		return fmt.Sprintf("%.10q...", t.value)
+	}
+	return fmt.Sprintf("%q", t.value)
 }
 
 type lexer struct {
