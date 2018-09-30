@@ -15,6 +15,7 @@ const (
 	tokenRightParen           = `)`
 	tokenEquals               = `=`
 	tokenIdentifier           = `identifier`
+	tokenNewLine              = `newline`
 	tokenWhitespace           = `whitespace`
 )
 
@@ -65,12 +66,13 @@ var tokenRegexes = []struct {
 	tokenType tokenType
 	regex     *regexp.Regexp
 }{
-	{tokenLambda, regexp.MustCompile(`\A(\\)`)},
+	{tokenLambda, regexp.MustCompile(`\A([\\λ])`)},
 	{tokenDot, regexp.MustCompile(`\A(\.)`)},
 	{tokenLeftParen, regexp.MustCompile(`\A(\()`)},
 	{tokenRightParen, regexp.MustCompile(`\A(\))`)},
 	{tokenEquals, regexp.MustCompile(`\A(=)`)},
 	{tokenIdentifier, regexp.MustCompile(`\A(\b[a-zA-Z0-9]+\b)`)},
+	{tokenNewLine, regexp.MustCompile(`\A(\n+)`)},
 	{tokenWhitespace, regexp.MustCompile(`\s`)},
 }
 

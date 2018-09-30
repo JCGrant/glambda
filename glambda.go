@@ -52,8 +52,6 @@ func Run() {
 	
 	
 	`
-	l := lex(code)
-	for token := range l.tokens {
-		fmt.Println(token)
-	}
+	node := parse(code)
+	fmt.Printf("%s", node)
 }
