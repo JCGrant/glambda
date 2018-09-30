@@ -17,6 +17,7 @@ const (
 	tokenIdentifier           = `identifier`
 	tokenNewLine              = `newline`
 	tokenWhitespace           = `whitespace`
+	tokenEOF                  = `EOF`
 )
 
 type token struct {
@@ -26,12 +27,14 @@ type token struct {
 
 func (t token) String() string {
 	switch {
+	case t.tokenType == tokenEOF:
+		return "EOF"
 	case t.tokenType == tokenErr:
 		return t.value
 	case len(t.value) > 10:
-		return fmt.Sprintf("%.10q...", t.value)
+		return fmt.Sprintf("%.10s...", t.value)
 	}
-	return fmt.Sprintf("%q", t.value)
+	return fmt.Sprintf("%s", t.value)
 }
 
 type lexer struct {
@@ -77,8 +80,9 @@ var tokenRegexes = []struct {
 }
 
 func (l *lexer) lexOneToken() {
+	var input string
 	for _, tr := range tokenRegexes {
-		input := l.input[l.position:]
+		input = l.input[l.position:]
 		if value := tr.regex.FindString(input); value != "" {
 			// Ignore whitespace tokens but still want to track position
 			if tr.tokenType != tokenWhitespace {
@@ -88,12 +92,13 @@ func (l *lexer) lexOneToken() {
 			return
 		}
 	}
-	l.errorf("invalid token at:\n%s", l.input)
+	l.errorf("invalid token '%s'", input)
 }
 
 func (l *lexer) run() {
-	for len(l.input) > 0 {
+	for l.position < len(l.input) {
 		l.lexOneToken()
 	}
+	l.emit(token{tokenEOF, ""})
 	close(l.tokens)
 }

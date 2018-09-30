@@ -19,7 +19,7 @@ func newParser(input string) *parser {
 	}
 }
 
-func parse(input string) node {
+func parse(input string) []node {
 	p := newParser(input)
 	return p.parse()
 }
@@ -52,14 +52,21 @@ func (p *parser) consume(expectedType tokenType) token {
 	if token.tokenType == expectedType {
 		return token
 	}
-	panic(fmt.Sprintf("expected '%s' token, got '%s' at:\n%s", expectedType, token, p.input[p.lexer.position-len(token.value):]))
+	panic(fmt.Sprintf("expected '%s' token, got '%s' at:\n%s", expectedType, token, p.input[p.lexer.position-1:]))
 }
 
-func (p *parser) parse() node {
-	for p.expect(tokenNewLine) {
-		p.consume(tokenNewLine)
+func (p *parser) parse() []node {
+	var nodes []node
+	for {
+		for p.expect(tokenNewLine) {
+			p.consume(tokenNewLine)
+		}
+		if p.expect(tokenEOF) {
+			break
+		}
+		nodes = append(nodes, p.parseDefinition())
 	}
-	return p.parseDefinition()
+	return nodes
 }
 
 func (p *parser) parseDefinition() definitionNode {
@@ -97,6 +104,9 @@ func (p *parser) parseAbstraction() abstractionNode {
 func (p *parser) parseApplication() term {
 	left := p.parseAtom()
 	for {
+		if p.expect(tokenNewLine) {
+			return left
+		}
 		right := p.parseAtom()
 		if right == nil {
 			return left

@@ -52,6 +52,8 @@ func Run() {
 	
 	
 	`
-	node := parse(code)
-	fmt.Printf("%s", node)
+	nodes := parse(code)
+	for _, node := range nodes {
+		fmt.Printf("%s\n", node)
+	}
 }
