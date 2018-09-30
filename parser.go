@@ -52,7 +52,10 @@ func (p *parser) consume(expectedType tokenType) token {
 	if token.tokenType == expectedType {
 		return token
 	}
-	panic(fmt.Sprintf("expected '%s' token, got '%s' at:\n%s", expectedType, token, p.input[p.lexer.position-1:]))
+	panic(fmt.Sprintf(
+		"expected '%s' token, got '%s' at:\n%s",
+		expectedType, token, p.input[p.lexer.position-1:],
+	))
 }
 
 func (p *parser) parse() []node {
