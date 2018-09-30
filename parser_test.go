@@ -1,15 +1,8 @@
 package glambda
 
 import (
-	"reflect"
 	"testing"
 )
-
-func expectEqual(t *testing.T, expected, actual interface{}) {
-	if !reflect.DeepEqual(expected, actual) {
-		t.Fatalf("expected %v, got %v", expected, actual)
-	}
-}
 
 func TestParseLambdaTerm(t *testing.T) {
 	tests := []struct {
@@ -174,7 +167,7 @@ func TestParseLambdaTerm(t *testing.T) {
 		t.Run(test.input, func(t *testing.T) {
 			p := newParser(test.input)
 			actual := p.parseLambdaTerm()
-			expectEqual(t, test.expected, actual)
+			assertEqual(t, test.expected, actual)
 		})
 	}
 }
