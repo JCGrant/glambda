@@ -44,13 +44,15 @@ import (
 
 func Run() {
 	code := `
-	
-	test = \ a b . a b
+
+-- this is a comment
+
+test = \ a b . a b
 
 
-	test2 = \ x y . x (y y)
-	
-	
+test2 = \ x y . x (y y)
+
+
 	`
 	nodes := parse(code)
 	for _, node := range nodes {

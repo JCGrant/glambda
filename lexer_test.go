@@ -38,9 +38,15 @@ func TestLex(t *testing.T) {
 			},
 		},
 		{
-			// there are spaces on the second row
+			`-- hey this is a test`,
+			[]token{
+				token{tokenComment, "-- hey this is a test"},
+				token{tokenEOF, ""},
+			},
+		},
+		{
 			`
-			 
+			 -- there are spaces to the left of this comment
 
 			0 = \ f      x .      f (f     x)
 
@@ -48,6 +54,7 @@ func TestLex(t *testing.T) {
 			`,
 			[]token{
 				token{tokenNewLine, "\n"},
+				token{tokenComment, "-- there are spaces to the left of this comment"},
 				token{tokenNewLine, "\n\n"},
 				token{tokenIdentifier, `0`},
 				token{tokenEquals, `=`},

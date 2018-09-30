@@ -61,8 +61,10 @@ func (p *parser) consume(expectedType tokenType) token {
 func (p *parser) parse() []node {
 	var nodes []node
 	for {
-		for p.expect(tokenNewLine) {
-			p.consume(tokenNewLine)
+		token := p.peek()
+		for token.tokenType == tokenComment || token.tokenType == tokenNewLine {
+			p.consume(token.tokenType)
+			token = p.peek()
 		}
 		if p.expect(tokenEOF) {
 			break
